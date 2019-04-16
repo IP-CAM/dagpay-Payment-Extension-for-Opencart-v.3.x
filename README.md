@@ -15,8 +15,6 @@ Dagpay helps you to accept lightning fast dagcoin payments directly from your eC
 1. Download the [OpenCart extension .zip file](#)
 2. Open **Installer** in **Extensions** main menu tab; 
 3. Select the downloaded extension .zip file;
-4. After installation, select **Payments** category in installed extensions section;
-5. Enable Dagpay and configure it with credentials generated under your Dagpay organisation account.
 
 ## Setup & Configuration
 
