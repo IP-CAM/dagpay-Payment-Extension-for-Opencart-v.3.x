@@ -12,7 +12,7 @@ Dagpay helps you to accept lightning fast dagcoin payments directly from your eC
 
 ## Installation
 
-1. Download the [OpenCart extension .zip file](#)
+1. Download the [OpenCart extension .zip file](https://github.com/dagpay/dagpay-opencart/releases/download/v1.0.0/dagpay-opencart.ocmod.zip)
 2. Open **Installer** in **Extensions** main menu tab; 
 3. Select the downloaded extension .zip file;
 
