@@ -13,40 +13,43 @@ class ControllerExtensionPaymentDagpay extends Controller
 
         return $this->load->view('extension/payment/dagpay', $data);
     }
+
     public function checkout()
     {
-        $dagpay_client = $this->initDagpayClient();
         $this->load->model('checkout/order');
 
         $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
         $description = '';
         foreach ($this->cart->getProducts() as $product) {
-            $description .= $product['quantity'] . ' × ' . $product['name'].';';
+            $description .= $product['quantity'] . ' × ' . $product['name'] . ';';
         }
 
         $response = $this->redirectToPayment(
-                        $order_info['order_id'],
-                        (float)number_format($order_info['total'], 2, '.', ''),
-                        $description,
-                        $order_info['currency_code']
-                    );
+            $order_info['order_id'],
+            (float) number_format($order_info['total'], 2, '.', ''),
+            $description,
+            $order_info['currency_code']
+        );
         if ($response) {
             $this->model_checkout_order->addOrderHistory($order_info['order_id'], $this->config->get('payment_dagpay_pending_status_id'));
             $this->response->redirect($response['paymentUrl']);
         } else {
-            $this->log->write("Order #" . $order_info['order_id'] . " is not valid.");
+            $this->log->write('Order #' . $order_info['order_id'] . ' is not valid.');
             $this->response->redirect($this->url->link('checkout/checkout', '', true));
         }
     }
+
     public function cancel()
     {
         $this->response->redirect($this->url->link('checkout/cart', ''));
     }
+
     public function success()
     {
         $this->response->redirect($this->url->link('checkout/success', '', true));
     }
+
     public function callback()
     {
         $this->load->model('checkout/order');
@@ -61,49 +64,54 @@ class ControllerExtensionPaymentDagpay extends Controller
         $signature_check = $this->checkInvoiceSignature($input);
 
         if (!empty($order_info) && $signature_check) {
-                switch ($dagpay_invoice_status) {
-                    case 'PAID':
-                    case 'PAID_EXPIRED':
-                        $order_status = 'payment_dagpay_paid_status_id';
-                        break;
-                    case 'PENDING':
-                        $order_status = 'payment_dagpay_pending_status_id';
-                        break;
-                    case 'WAITING_FOR_CONFIRMATION':
-                        $order_status = 'payment_dagpay_waiting_status_id';
-                        break;
-                    case 'EXPIRED':
-                        $order_status = 'payment_dagpay_expired_status_id';
-                        break;
-                    case 'FAILED':
-                        $order_status = 'payment_dagpay_failed_status_id';
-                        break;
-                    case 'CANCELLED':
-                        $order_status = 'payment_dagpay_canceled_status_id';
-                        break;
-                    default:
-                        $order_status = NULL;
-                }
-                if (!is_null($order_status)) {
-                    $this->model_checkout_order->addOrderHistory($order_id, $this->config->get($order_status));
-                }
-        } elseif (!$signature_check) {
-              $error_message = 'Invalid signature provided in #Order '.$order_id;
-              $this->log->write($error_message);
+            switch ($dagpay_invoice_status) {
+                case 'PAID':
+                case 'PAID_EXPIRED':
+                    $order_status = 'payment_dagpay_paid_status_id';
 
+                    break;
+                case 'PENDING':
+                    $order_status = 'payment_dagpay_pending_status_id';
+
+                    break;
+                case 'WAITING_FOR_CONFIRMATION':
+                    $order_status = 'payment_dagpay_waiting_status_id';
+
+                    break;
+                case 'EXPIRED':
+                    $order_status = 'payment_dagpay_expired_status_id';
+
+                    break;
+                case 'FAILED':
+                    $order_status = 'payment_dagpay_failed_status_id';
+
+                    break;
+                case 'CANCELLED':
+                    $order_status = 'payment_dagpay_canceled_status_id';
+
+                    break;
+                default:
+                    $order_status = null;
+            }
+            if ($order_status !== null) {
+                $this->model_checkout_order->addOrderHistory($order_id, $this->config->get($order_status));
+            }
+        } elseif (!$signature_check) {
+            $error_message = 'Invalid signature provided in #Order ' . $order_id;
+            $this->log->write($error_message);
         }
         $this->response->addHeader('HTTP/1.1 200 OK');
     }
 
     private function initDagpayClient()
     {
-      return new DagpayClient(
-          $this->config->get('payment_dagpay_enviroment_id'),
-          $this->config->get('payment_dagpay_user_id'),
-          $this->config->get('payment_dagpay_secret'),
-          $this->config->get('payment_dagpay_test_mode'),
-          'standalone'
-      );
+        return new DagpayClient(
+            $this->config->get('payment_dagpay_enviroment_id'),
+            $this->config->get('payment_dagpay_user_id'),
+            $this->config->get('payment_dagpay_secret'),
+            $this->config->get('payment_dagpay_test_mode'),
+            'standalone'
+        );
     }
 
     private function checkInvoiceSignature($info)
@@ -111,14 +119,13 @@ class ControllerExtensionPaymentDagpay extends Controller
         $client_instance = $this->initDagpayClient();
         $expected_signature = $client_instance->getInvoiceInfoSignature($info);
         $received_signature = $info['signature'];
+
         return $expected_signature == $received_signature;
     }
 
     private function redirectToPayment($orderId, $total, $desc, $currency = 'DAG')
     {
         $client = $this->initDagpayClient();
-        $data = $client->createInvoice($orderId, $currency, $total, $desc);
-
-        return $data;
+        return $client->createInvoice($orderId, $currency, $total, $desc);
     }
 }

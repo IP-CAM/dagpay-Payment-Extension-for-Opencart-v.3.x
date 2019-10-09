@@ -9,19 +9,22 @@ class DagpayClient
     private $test;
     private $platform;
     private $curlFactory;
+
     public function __construct(
         $environment_id,
         $user_id,
         $secret,
         $mode,
         $platform
-    ) {
+    )
+    {
         $this->environment_id = $environment_id;
         $this->user_id = $user_id;
         $this->secret = $secret;
         $this->test = $mode;
         $this->platform = $platform;
     }
+
     private function getRandomString($length)
     {
         return strtoupper(
@@ -32,6 +35,7 @@ class DagpayClient
             )
         );
     }
+
     private function getSignature($tokens)
     {
         return hash_hmac(
@@ -40,6 +44,7 @@ class DagpayClient
             $this->secret
         );
     }
+
     private function getCreateInvoiceSignature($info)
     {
         return $this->getSignature([
@@ -53,6 +58,7 @@ class DagpayClient
             $info["nonce"]
         ]);
     }
+
     public function getInvoiceInfoSignature($info)
     {
         return $this->getSignature([
@@ -80,6 +86,7 @@ class DagpayClient
             $info['nonce']
         ]);
     }
+
     public function createInvoice($id, $currency, $total, $description = '')
     {
         $invoice = [
@@ -87,9 +94,9 @@ class DagpayClient
             "environmentId" => $this->environment_id,
             "currencyAmount" => $total,
             "currency" => $currency,
-            "description" => "Dagcoin Payment Gateway invoice : ". $description,
+            "description" => "Dagcoin Payment Gateway invoice : " . $description,
             "data" => "Order",
-            "paymentId" => (string) $id,
+            "paymentId" => (string)$id,
             "date" => date('c'),
             "nonce" => $this->getRandomString(32)
         ];
@@ -100,11 +107,13 @@ class DagpayClient
 
         return $result;
     }
+
     public function getInvoiceInfo($id)
     {
         $result = $this->makeRequest('GET', 'invoices/' . $id);
         return $result;
     }
+
     public function cancelInvoice($id)
     {
         $result = $this->makeRequest('POST', 'invoices/cancel', [
@@ -112,19 +121,21 @@ class DagpayClient
         ]);
         return $result;
     }
+
     private function curlGet($url)
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_GET, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                                            'Content-Type: application/json',
-                                            'Connection: Keep-Alive'
-                                            ));
+            'Content-Type: application/json',
+            'Connection: Keep-Alive'
+        ));
         $result = curl_exec($ch);
         curl_close($ch);
         return json_encode($result);
     }
+
     private function curlPost($url, $data = [])
     {
         $data = json_encode($data);
@@ -142,6 +153,7 @@ class DagpayClient
         curl_close($ch);
         return json_decode($result, true);
     }
+
     private function makeRequest($method, $url, $data = [])
     {
         if ($this->platform === 'standalone') {
@@ -153,7 +165,7 @@ class DagpayClient
             }
         } elseif ('wordpress') {
             $data = json_encode($data);
-            $request["headers"] = [ 'Content-Type' => 'application/json'];
+            $request["headers"] = ['Content-Type' => 'application/json'];
             $response = null;
             if ($method == 'POST') {
                 $request["body"] = $data;
@@ -171,7 +183,7 @@ class DagpayClient
 
     private function getUrl()
     {
-        return $this->test ?   'https://test-api.dagpay.io/api/' : 'https://api.dagpay.io/api/';
+        return $this->test ? 'https://test-api.dagpay.io/api/' : 'https://api.dagpay.io/api/';
     }
 
 }
