@@ -16,7 +16,7 @@ class ModelExtensionPaymentDagpay extends Model
                 'code' => 'dagpay',
                 'title' => $this->language->get('text_title'),
                 'terms' => '',
-                'sort_order' => $this->config->get('payment_coingate_sort_order')
+                'sort_order' => $this->config->get('payment_dagpay_sort_order')
             );
         }
         return $method_data;

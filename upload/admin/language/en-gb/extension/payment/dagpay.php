@@ -22,4 +22,4 @@ $_['help_total'] = 'The checkout total the order must reach before this payment 
 $_['help_test_mode'] = 'Enable "test mode" to test on test-app.dagpay.io. Please note, that for "Test" mode (sandbox) you must generate separate API credentials on test-app.dagpay.io. API credentials generated on app.dagpay.io will not work for "Test" mode.';
 $_['error_permission'] = 'Warning: You do not have permission to modify Dagpay!';
 $_['error_composer'] = 'Unable to load dagpay-php. Please download a compiled vendor folder or run composer.';
-$_['text_coingate'] = '<a href="https://dagpay.io/" target="_blank" rel="noopener"><img src="view/image/payment/coingate.png" alt="Dagpay" title="Dagpay" style="border: 1px solid #EEEEEE;" /></a>';
+$_['text_dagpay'] = '<a href="https://dagpay.io/" target="_blank" rel="noopener"><img src="view/image/payment/coingate.png" alt="Dagpay" title="Dagpay" style="border: 1px solid #EEEEEE;" /></a>';
