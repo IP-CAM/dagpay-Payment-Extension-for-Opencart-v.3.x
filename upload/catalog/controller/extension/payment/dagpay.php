@@ -1,5 +1,6 @@
 <?php
-require_once(DIR_SYSTEM . 'library/dagpay/dagpay.php');
+
+use Dagpay\DagpayClient;
 
 class ControllerExtensionPaymentDagpay extends Controller
 {
@@ -14,6 +15,9 @@ class ControllerExtensionPaymentDagpay extends Controller
         return $this->load->view('extension/payment/dagpay', $data);
     }
 
+    /**
+     * @throws Exception
+     */
     public function checkout()
     {
         $this->load->model('checkout/order');
@@ -117,15 +121,23 @@ class ControllerExtensionPaymentDagpay extends Controller
     private function checkInvoiceSignature($info)
     {
         $client_instance = $this->initDagpayClient();
-        $expected_signature = $client_instance->getInvoiceInfoSignature($info);
+        $expected_signature = $client_instance->get_invoice_info_signature($info);
         $received_signature = $info['signature'];
 
         return $expected_signature == $received_signature;
     }
 
+    /**
+     * @param $orderId
+     * @param $total
+     * @param $desc
+     * @param string $currency
+     * @return array|mixed|object
+     * @throws Exception
+     */
     private function redirectToPayment($orderId, $total, $desc, $currency = 'DAG')
     {
         $client = $this->initDagpayClient();
-        return $client->createInvoice($orderId, $currency, $total, $desc);
+        return $client->create_invoice($orderId, $currency, $total);
     }
 }

@@ -1,0 +1,17 @@
+{
+  "name": "dagpay/dagpay-opencart",
+  "description": "Dagpay gateway for Easy Digital Downloads",
+  "type": "opencart-plugin",
+  "homepage": "https://github.com/dagpay/opencart-plugin",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Ahti Nurme",
+      "email": "ahtinurme@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.1",
+    "dagpay/client-php": "^1.0.8"
+  }
+}
