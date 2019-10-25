@@ -63,10 +63,10 @@ class ControllerExtensionPaymentDagpay extends Controller
     {
         $this->load->model('checkout/order');
         $inputJSON = file_get_contents('php://input');
-        $input = json_decode($inputJSON, true);
+        $input = json_decode($inputJSON, false);
 
-        $dagpay_invoice_status = $input['state'];
-        $order_id = $input['paymentId'];
+        $dagpay_invoice_status = $input->state;
+        $order_id = $input->paymentId;
 
         $order_info = $this->model_checkout_order->getOrder($order_id);
 
@@ -127,7 +127,7 @@ class ControllerExtensionPaymentDagpay extends Controller
     {
         $client_instance = $this->initDagpayClient();
         $expected_signature = $client_instance->get_invoice_info_signature($info);
-        $received_signature = $info['signature'];
+        $received_signature = $info->signature;
 
         return $expected_signature == $received_signature;
     }
