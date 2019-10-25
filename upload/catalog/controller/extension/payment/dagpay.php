@@ -1,5 +1,7 @@
 <?php
 
+use Dagpay\DagpayClient;
+
 require_once DIR_SYSTEM . 'library/dagpay/DagpayClient.php';
 require_once DIR_SYSTEM . 'library/dagpay/Curl.php';
 require_once DIR_SYSTEM . 'library/dagpay/CurlException.php';
