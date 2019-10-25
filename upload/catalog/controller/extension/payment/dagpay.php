@@ -1,6 +1,9 @@
 <?php
 
-use Dagpay\DagpayClient;
+require_once DIR_SYSTEM . 'library/dagpay/DagpayClient.php';
+require_once DIR_SYSTEM . 'library/dagpay/Curl.php';
+require_once DIR_SYSTEM . 'library/dagpay/CurlException.php';
+require_once DIR_SYSTEM . 'library/dagpay/ValidationException.php';
 
 class ControllerExtensionPaymentDagpay extends Controller
 {
@@ -31,7 +34,7 @@ class ControllerExtensionPaymentDagpay extends Controller
 
         $response = $this->redirectToPayment(
             $order_info['order_id'],
-            (float) number_format($order_info['total'], 2, '.', ''),
+            (float)number_format($order_info['total'], 2, '.', ''),
             $description,
             $order_info['currency_code']
         );
