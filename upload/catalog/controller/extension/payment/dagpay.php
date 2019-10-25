@@ -42,7 +42,7 @@ class ControllerExtensionPaymentDagpay extends Controller
         );
         if ($response) {
             $this->model_checkout_order->addOrderHistory($order_info['order_id'], $this->config->get('payment_dagpay_pending_status_id'));
-            $this->response->redirect($response['paymentUrl']);
+            $this->response->redirect($response->payload->paymentUrl);
         } else {
             $this->log->write('Order #' . $order_info['order_id'] . ' is not valid.');
             $this->response->redirect($this->url->link('checkout/checkout', '', true));
